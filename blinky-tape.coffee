@@ -1,10 +1,11 @@
 _            = require 'lodash'
+async        = require 'async'
 tinycolor    = require 'tinycolor2'
 {SerialPort} = require 'serialport'
 debug        = require('debug')('meshblu-blinky-tape:blinky-tape')
 
 LED_COUNT = 60
-BUFFER_SIZE = (LED_COUNT * 3) + 1 # 3 bytes per LED + the semaphore
+BUFFER_SIZE = (LED_COUNT * 3) + 2 # 3 bytes per LED + the semaphore
 
 class BlinkyTape
   open: (callback=->) =>
@@ -20,8 +21,12 @@ class BlinkyTape
     @serial.close callback
 
   animate: (animation, callback=->) =>
-    _.each animation, (frame) =>
-      @serial.write @frameToBuffer(frame), callback
+    async.eachSeries animation, @animateFrame, callback
+
+  animateFrame: (frame, callback=->) =>
+    debug 'animateFrame'
+    @serial.write @frameToBuffer(frame), =>
+      _.delay callback, 10
 
   frameToBuffer: (frame) =>
     buffer = new Buffer BUFFER_SIZE
