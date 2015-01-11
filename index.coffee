@@ -1,16 +1,14 @@
 'use strict';
 util           = require 'util'
 {EventEmitter} = require 'events'
-debug          = require('debug')('meshblu-blinky-tape')
+debug          = require('debug')('meshblu-blinky-tape:index')
+BlinkyTape     = require './blinky-tape'
 
 MESSAGE_SCHEMA =
   type: 'object'
   properties:
-    exampleBoolean:
-      type: 'boolean'
-      required: true
-    exampleString:
-      type: 'string'
+    animation:
+      type: 'array'
       required: true
 
 OPTIONS_SCHEMA =
@@ -25,20 +23,23 @@ class Plugin extends EventEmitter
     @options = {}
     @messageSchema = MESSAGE_SCHEMA
     @optionsSchema = OPTIONS_SCHEMA
+    @blinkyTape    = new BlinkyTape
 
   onMessage: (message) =>
-    payload = message.payload;
-    response =
-      devices: ['*']
-      topic: 'echo'
-      payload: payload
-    this.emit 'message', response
+    debug 'onMessage'
+    @blinkyTape.animate message.animation, (error) =>
+      return debug 'animate error', error if error?
+      debug 'animation done'
+
 
   onConfig: (device) =>
     @setOptions device.options
 
   setOptions: (options={}) =>
     @options = options
+    @blinkyTape.open (error) =>
+      return debug error if error?
+      debug 'blinky-tape open'
 
 module.exports =
   messageSchema: MESSAGE_SCHEMA

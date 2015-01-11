@@ -1,5 +1,6 @@
 meshblu  = require 'meshblu'
 {Plugin} = require './index'
+debug = require('debug')('meshblu-blinky-tape:connector')
 
 Connector = (config) ->
   conx = meshblu.createConnection
@@ -19,6 +20,7 @@ Connector = (config) ->
   plugin = new Plugin();
 
   conx.on 'ready', ->
+    debug 'ready'
     conx.whoami uuid: config.uuid, (device) ->
       plugin.setOptions device.options
       conx.update
