@@ -8,6 +8,12 @@ LED_COUNT = 60
 BUFFER_SIZE = (LED_COUNT * 3) + 2 # 3 bytes per LED + the semaphore
 
 class BlinkyTape
+  constructor: (options={}) ->
+    @setOptions options
+
+  setOptions: (options={}) =>
+    @framesPerSecond = options.framesPerSecond ? 30
+
   open: (callback=->) =>
     @close (error) =>
       return callback error if error?
@@ -24,9 +30,8 @@ class BlinkyTape
     async.eachSeries animation, @animateFrame, callback
 
   animateFrame: (frame, callback=->) =>
-    debug 'animateFrame'
     @serial.write @frameToBuffer(frame), =>
-      _.delay callback, 10
+      _.delay callback, (1000 / @framesPerSecond)
 
   frameToBuffer: (frame) =>
     buffer = new Buffer BUFFER_SIZE

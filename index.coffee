@@ -14,8 +14,9 @@ MESSAGE_SCHEMA =
 OPTIONS_SCHEMA =
   type: 'object'
   properties:
-    firstExampleOption:
-      type: 'string'
+    framesPerSecond:
+      type: 'integer'
+      default: 30
       required: true
 
 class Plugin extends EventEmitter
@@ -31,12 +32,12 @@ class Plugin extends EventEmitter
       return debug 'animate error', error if error?
       debug 'animation done'
 
-
   onConfig: (device) =>
     @setOptions device.options
 
   setOptions: (options={}) =>
     @options = options
+    @blinkyTape.setOptions options
     @blinkyTape.open (error) =>
       return debug error if error?
       debug 'blinky-tape open'
