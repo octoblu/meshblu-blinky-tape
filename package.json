@@ -1,24 +1,17 @@
 {
-  "name": "blinky-tape",
+  "name": "meshblu-blinky-tape",
+  "repository": "octoblu/meshblu-blinky-tape",
   "version": "1.0.0",
-  "description": "A library for controlling a blinky-tape in node",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node command.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/redaphid/blinky-tape.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/redaphid/blinky-tape/issues"
-  },
-  "homepage": "https://github.com/redaphid/blinky-tape",
   "dependencies": {
-    "lodash": "^2.4.1",
-    "serialport": "^1.4.6",
-    "when": "^3.4.6"
-  }
+    "coffee-script": "^1.8.0",
+    "meshblu": "^1.8.3",
+    "debug": "^2.1.0"
+  },
+  "keywords": [
+    "meshblu-connector",
+    "gateblu"
+  ]
 }
