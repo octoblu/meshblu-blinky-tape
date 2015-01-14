@@ -18,6 +18,10 @@ OPTIONS_SCHEMA =
       type: 'integer'
       default: 30
       required: true
+    interuptable:
+      type: 'boolean'
+      default: true
+      required: true
 
 class Plugin extends EventEmitter
   constructor: ->
@@ -28,9 +32,7 @@ class Plugin extends EventEmitter
 
   onMessage: (message) =>
     debug 'onMessage'
-    @blinkyTape.animate message.animation, (error) =>
-      return debug 'animate error', error if error?
-      debug 'animation done'
+    @blinkyTape.setAnimation message.animation
 
   onConfig: (device) =>
     @setOptions device.options
@@ -41,6 +43,7 @@ class Plugin extends EventEmitter
     @blinkyTape.open (error) =>
       return debug error if error?
       debug 'blinky-tape open'
+      @blinkyTape.start()
 
 module.exports =
   messageSchema: MESSAGE_SCHEMA

@@ -13,11 +13,12 @@ class BlinkyTape
 
   setOptions: (options={}) =>
     @framesPerSecond = options.framesPerSecond ? 30
+    @interuptable    = options.interuptable ? true
 
   open: (callback=->) =>
     @close (error) =>
       return callback error if error?
-      @serial = new SerialPort '/dev/tty.usbmodemfd121', baudrate: 57600, false
+      @serial = new SerialPort '/dev/tty.usbmodem1461', baudrate: 57600, false
       @serial.open (error) =>
         return callback error if error?
         callback()
@@ -26,10 +27,25 @@ class BlinkyTape
     return _.defer callback unless @serial?
     @serial.close callback
 
-  animate: (animation, callback=->) =>
-    async.eachSeries animation, @animateFrame, callback
+  setAnimation: (animation) =>
+    @animation = animation
+    @interupt  = true
+
+  start: =>
+    return if @animating
+    @animating = true
+    @animate()
+
+  animate: (callback=->) =>
+    debug('animate')
+    animation = _.clone(@animation ? [])
+    async.eachSeries animation, @animateFrame, =>
+      @interupt = false
+      _.delay @animate, 1
 
   animateFrame: (frame, callback=->) =>
+    return callback() if @interupt && @interuptable
+
     @serial.write @frameToBuffer(frame), =>
       _.delay callback, (1000 / @framesPerSecond)
 
