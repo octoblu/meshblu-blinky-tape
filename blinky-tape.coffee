@@ -18,7 +18,7 @@ class BlinkyTape
   open: (callback=->) =>
     @close (error) =>
       return callback error if error?
-      @serial = new SerialPort '/dev/tty.usbmodemfa131', baudrate: 57600, false
+      @serial = new SerialPort '/dev/tty.usbmodemfd121', baudrate: 57600, false
       @serial.open (error) =>
         return callback error if error?
         callback()
@@ -50,7 +50,7 @@ class BlinkyTape
       _.delay callback, (1000 / @framesPerSecond)
 
   frameToBuffer: (frame) =>
-    buffer = new Buffer BUFFER_SIZE
+    buffer = new Buffer @bufferSize
     buffer.fill 0
     buffer.writeUInt8 255, 0 # semaphore
 
@@ -61,7 +61,7 @@ class BlinkyTape
       buffer.writeUInt8 g, (i * 3) + 2
       buffer.writeUInt8 b, (i * 3) + 3
 
-    buffer.writeUInt8 255, BUFFER_SIZE - 1 # semaphore
+    buffer.writeUInt8 255, @bufferSize - 1 # semaphore
     return buffer
 
   colorToRgb: (color) =>

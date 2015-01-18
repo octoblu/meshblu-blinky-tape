@@ -33,9 +33,10 @@ class Plugin extends EventEmitter
     @optionsSchema = OPTIONS_SCHEMA
     @blinkyTape    = new BlinkyTape
 
-  onMessage: (message) =>
+  onMessage: (message, callback=->) =>
     debug 'onMessage'
     @blinkyTape.setAnimation message.animation
+    callback()
 
   onConfig: (device) =>
     @setOptions device.options
