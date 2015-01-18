@@ -14,6 +14,9 @@ MESSAGE_SCHEMA =
 OPTIONS_SCHEMA =
   type: 'object'
   properties:
+    ledCound:
+      type: 'integer'
+      default: 60
     framesPerSecond:
       type: 'integer'
       default: 30

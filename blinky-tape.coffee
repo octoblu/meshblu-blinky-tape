@@ -4,9 +4,6 @@ tinycolor    = require 'tinycolor2'
 {SerialPort} = require 'serialport'
 debug        = require('debug')('meshblu-blinky-tape:blinky-tape')
 
-LED_COUNT = 60
-BUFFER_SIZE = (LED_COUNT * 3) + 2 # 3 bytes per LED + the semaphore
-
 class BlinkyTape
   constructor: (options={}) ->
     @setOptions options
@@ -15,10 +12,13 @@ class BlinkyTape
     @framesPerSecond = options.framesPerSecond ? 30
     @interuptable    = options.interuptable ? true
 
+    @ledCount        = options.ledCount ? 60
+    @bufferSize      = (@ledCount * 3) + 2
+
   open: (callback=->) =>
     @close (error) =>
       return callback error if error?
-      @serial = new SerialPort '/dev/tty.usbmodem1461', baudrate: 57600, false
+      @serial = new SerialPort '/dev/tty.usbmodemfa131', baudrate: 57600, false
       @serial.open (error) =>
         return callback error if error?
         callback()
