@@ -1,5 +1,6 @@
-_            = require 'lodash'
 async        = require 'async'
+glob         = require 'glob'
+_            = require 'lodash'
 tinycolor    = require 'tinycolor2'
 {SerialPort} = require 'serialport'
 debug        = require('debug')('meshblu-blinky-tape:blinky-tape')
@@ -15,13 +16,26 @@ class BlinkyTape
     @ledCount        = options.ledCount ? 60
     @bufferSize      = (@ledCount * 3) + 2
 
+  findSerialPort: (callback=->) =>
+    glob '/dev/tty.usbmodem*', (error, files) =>
+      return callback error if error?
+      if _.size(files) == 0
+        return callback new Error "Could not find a BlinkyTape"
+      if _.size(files) > 1
+        return callback new Error "Found #{_.size files}. Cannot decide which one is right"
+
+      callback null, _.first files
+
   open: (callback=->) =>
     @close (error) =>
       return callback error if error?
-      @serial = new SerialPort '/dev/tty.usbmodemfd121', baudrate: 57600, false
-      @serial.open (error) =>
+      @findSerialPort (error, serialPortPath) =>
         return callback error if error?
-        callback()
+
+        @serial = new SerialPort serialPortPath, baudrate: 57600, false
+        @serial.open (error) =>
+          return callback error if error?
+          callback()
 
   close: (callback=->) =>
     return _.defer callback unless @serial?

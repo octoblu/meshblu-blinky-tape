@@ -45,7 +45,7 @@ class Plugin extends EventEmitter
     @options = options
     @blinkyTape.setOptions options
     @blinkyTape.open (error) =>
-      return debug error if error?
+      return @emit 'error', error if error?
       debug 'blinky-tape open'
       @blinkyTape.start()
 
