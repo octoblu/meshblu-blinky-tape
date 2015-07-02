@@ -23,27 +23,25 @@ Send a message to the device with the property animation, which is an array of f
 
 ### Example use of function node:
 
+This logic will blink a rainbow.
 
 ````
+
 function getColorFrame(color){
   return _.times(60, function(){
     return color;
   });
 }
-var animation = [
-  getColorFrame('black'),
-  getColorFrame('green'),
-  getColorFrame('blue'),
-  getColorFrame('red'),
-  getColorFrame('purple'),
-  getColorFrame('blue'),
-  getColorFrame('yellow'),
-  getColorFrame('green'),
-  getColorFrame('blue'),
-  getColorFrame('purple'),
-  getColorFrame('red'),
-  getColorFrame('red')
-];
+
+var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
+
+var colorIndex = 0
+var animation = _.times(120, function(i){
+   if(i % 20 == 0){
+       colorIndex++;
+   }
+   return getColorFrame(colors[colorIndex]);
+});
 
 return {
   animation: animation
