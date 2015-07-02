@@ -31,18 +31,18 @@ function getColorFrame(color){
   });
 }
 var animation = [
-  getColor('black'),
-  getColor('green'),
-  getColor('blue'),
-  getColor('red'),
-  getColor('purple'),
-  getColor('blue'),
-  getColor('yellow'),
-  getColor('green'),
-  getColor('blue'),
-  getColor('purple'),
-  getColor('red'),
-  getColor('red')
+  getColorFrame('black'),
+  getColorFrame('green'),
+  getColorFrame('blue'),
+  getColorFrame('red'),
+  getColorFrame('purple'),
+  getColorFrame('blue'),
+  getColorFrame('yellow'),
+  getColorFrame('green'),
+  getColorFrame('blue'),
+  getColorFrame('purple'),
+  getColorFrame('red'),
+  getColorFrame('red')
 ];
 
 return {
