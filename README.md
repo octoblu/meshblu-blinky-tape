@@ -26,7 +26,7 @@ Send a message to the device with the property animation, which is an array of f
 
 ````
 function getColorFrame(color){
-  return _.times(100, function(){
+  return _.times(60, function(){
     return color;
   });
 }
