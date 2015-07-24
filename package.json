@@ -1,7 +1,7 @@
 {
   "name": "meshblu-blinky-tape",
   "repository": "octoblu/meshblu-blinky-tape",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": {
     "start": "node command.js",
     "test": "exit 0"
@@ -12,7 +12,7 @@
     "debug": "^2.1.0",
     "glob": "^4.3.5",
     "lodash": "^2.4.1",
-    "meshblu": "^1.8.3",
+    "meshblu": "^1.30.0",
     "serialport": "^1.4.10",
     "tinycolor2": "^1.1.1"
   },
