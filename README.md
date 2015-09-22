@@ -1,49 +1,86 @@
-# Blinky Tape
+## meshblu-blinky-tape
 
-Add the Blink Tape device to your gateblu using Octoblu. Or create a meshblu.json for this library to run independently.
+[![Build Status](https://travis-ci.org/octoblu/meshblu-blinky-tape.svg?branch=master)](https://travis-ci.org/octoblu/meshblu-blinky-tape)
+[![Code Climate](https://codeclimate.com/github/octoblu/meshblu-blinky-tape/badges/gpa.svg)](https://codeclimate.com/github/octoblu/meshblu-blinky-tape)
+[![Test Coverage](https://codeclimate.com/github/octoblu/meshblu-blinky-tape/badges/coverage.svg)](https://codeclimate.com/github/octoblu/meshblu-blinky-tape)
+[![npm version](https://badge.fury.io/js/meshblu-blinky-tape.svg)](http://badge.fury.io/js/meshblu-blinky-tape)
+[![Gitter](https://badges.gitter.im/octoblu/help.svg)](https://gitter.im/octoblu/help)
 
-See this article for more details: https://www.hackster.io/royvandewater/blinky-tape
+A Meshblu connector for use in Octoblu or with other services.
 
-# Install Manually
+### Setup Instructions
 
-1. Clone this repo
-  - `git clone [repo-url]`
-1. Go into directory
-  - `cd meshblu-blinky-tape`
-1. Install Meshblu Util
-  - `npm install meshblu-util -g`
-1. Create Meshblu.json
-  - `meshblu-util register > meshblu.json`
-1. Claim in Octoblu
-  - `meshblu-util claim`
+### Travis
 
-# Messaging the device
+1. `gem install travis`
+1. `travis login`
 
-Send a message to the device with the property animation, which is an array of frames. Each frame contains an array of colors. A color can be anything accepted by tinycolor, for example, red, black, green, rbg(23, 23, 45), #00ff00, etc.
+#### Travis (S3)
 
-### Example use of function node:
+For use if you need to push your browserified version
 
-This logic will blink a rainbow.
+1. `travis encrypt [S3_ACCESS_KEY_SECRET]`
+1. add the generated key to the .travis.yml file under `secret_access_key` in the s3 deploy section.
+1. also add the s3 `access_key_id` to the same section
 
-````
+End result should look like this:
 
-function getColorFrame(color){
-  return _.times(60, function(){
-    return color;
-  });
-}
+```yml
+deploy:
+  - provider: s3
+    access_key_id: [S3_ACCESS_KEY]
+    secret_access_key:
+      secure: [S3_ACCESS_KEY_SECRET]
+    bucket: [UPLOAD_BUCKET] # octoblu-cdn
+    region: us-west-2
+    skip_cleanup: true
+    detect_encoding: true
+    local-dir: deploy
+    upload-dir: [UPLOAD_FOLDER] # js
+    on:
+      tags: true
+      all_branches: true
+      node: '0.10'
+```
 
-var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
+#### Travis (NPM Deploy)[http://docs.travis-ci.com/user/deployment/npm/]
 
-var colorIndex = 0
-var animation = _.times(120, function(i){
-   if(i % 20 == 0){
-       colorIndex++;
-   }
-   return getColorFrame(colors[colorIndex]);
-});
+1. `travis encrypt [NPM_ACCESS_KEY]` - this key is found in `~/.npmrc`
+1. add the generated key to the .travis.yml file under `api_key` in the npm deploy section.
+1. also add the npm `email` to the same section
 
-return {
-  animation: animation
-}
-````
+End result should look like this:
+
+```yml
+deploy:
+  - provider: npm
+    skip_cleanup: true
+    clean_up: false
+    email: [NPM_EMAIL]
+    api_key:
+      secure: [NPM_ACCESS_KEY]
+    on:
+      tags: true
+      all_branches: true
+      node: '0.11'
+```
+
+### Usage
+
+#### Gateblu Installation
+
+Use (gateblu)[https://gateblu.octoblu.com/] to run this as a device.
+
+#### Manual Installation
+
+1. `npm install meshblu-util -g`
+1. `npm install meshblu-blinky-tape` or `git clone [GIT_URL]`
+1. go into connector folder
+1. `meshblu-util register -t device:meshblu-blinky-tape > meshblu.json`
+1. `meshblu-util claim`
+1. `npm start` or to start with debug `DEBUG='meshblu-blinky-tape*' npm start`
+
+
+### Platform Dependencies
+
+Edit the package.json to change the platformDependencies. This will show up when installing the connector in Octoblu and Gateblu.

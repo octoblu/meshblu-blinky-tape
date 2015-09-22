@@ -1,20 +1,37 @@
 {
   "name": "meshblu-blinky-tape",
   "repository": "octoblu/meshblu-blinky-tape",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "scripts": {
     "start": "node command.js",
     "test": "exit 0"
   },
   "dependencies": {
     "async": "^0.9.0",
-    "coffee-script": "^1.8.0",
-    "debug": "^2.1.0",
+    "coffee-script": "^1.10.0",
+    "debug": "^2.2.0",
     "glob": "^4.3.5",
-    "lodash": "^2.4.1",
-    "meshblu": "^1.30.0",
+    "lodash": "^2.4.2",
+    "meshblu": "^1.30.1",
+    "meshblu-config": "^3.1.1",
     "serialport": "^1.4.10",
     "tinycolor2": "^1.1.1"
+  },
+  "platformDependencies": {
+    "darwin": [
+      "xcode"
+    ],
+    "win32": [
+      "Python 2.7",
+      "Visual Studio (Express)"
+    ],
+    "win64": [
+      "Python 2.7",
+      "Visual Studio (Express)"
+    ],
+    "linux": [],
+    "android": null,
+    "ios": null
   },
   "keywords": [
     "meshblu-connector",

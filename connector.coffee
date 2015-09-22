@@ -1,50 +1,76 @@
-meshblu  = require 'meshblu'
-{Plugin} = require './index'
-debug = require('debug')('meshblu-blinky-tape:connector')
+_              = require 'lodash'
+meshblu        = require 'meshblu'
+packageJSON    = require './package.json'
+{EventEmitter} = require 'events'
+{Plugin}       = require './index.coffee'
 
-Connector = (config) ->
-  conx = meshblu.createConnection
-    server : config.server
-    port   : config.port
-    uuid   : config.uuid
-    token  : config.token
+class Connector extends EventEmitter
+  constructor: (@config={}) ->
+    process?.on 'uncaughtException', (error) =>
+      @emitError error
+      process?.exit 1
 
-  consoleError = (error) ->
-    console.error error.message
-    console.error error.stack
+  createConnection: =>
+    @conx = meshblu.createConnection
+      server : @config.server
+      port   : @config.port
+      uuid   : @config.uuid
+      token  : @config.token
 
-  process.on 'uncaughtException', consoleError
-  conx.on 'notReady', consoleError
-  conx.on 'error', consoleError
+    @conx.on 'notReady', @emitError
+    @conx.on 'error', @emitError
 
-  plugin = new Plugin();
+    @conx.on 'ready', @onReady
+    @conx.on 'message', @onMessage
+    @conx.on 'config', @onConfig
 
-  conx.on 'ready', ->
-    debug 'ready'
-    conx.whoami uuid: config.uuid, (device) ->
-      plugin.setOptions device.options
-      conx.update
-        uuid:          config.uuid,
-        token:         config.token,
-        messageSchema: plugin.messageSchema,
-        optionsSchema: plugin.optionsSchema,
-        options:       plugin.options
-
-  conx.on 'message', ->
+  onConfig: (device) =>
+    @emit 'config', device
     try
-      plugin.onMessage arguments...
+      @plugin.onConfig arguments...
     catch error
-      consoleError error
+      @emitError error
 
-  conx.on 'config', ->
+  onMessage: (message) =>
+    @emit 'message.recieve', message
     try
-      plugin.onConfig arguments...
+      @plugin.onMessage arguments...
     catch error
-      consoleError error
+      @emitError error
 
-  plugin.on 'message', (message) ->
-    conx.message message
+  onReady: =>
+    @conx.whoami uuid: @config.uuid, (device) =>
+      @plugin.setOptions device.options
+      oldRecentVersions = device.recentVersions || [];
+      recentVersions = _.union oldRecentVersions, [packageJSON.version]
+      @conx.update
+        uuid:          @config.uuid
+        token:         @config.token
+        messageSchema: @plugin.messageSchema
+        optionsSchema: @plugin.optionsSchema
+        options:       @plugin.options
+        initializing:  false
+        currentVersion: packageJSON.version
+        recentVersions: recentVersions
 
-  plugin.on 'error', consoleError
+  run: =>
+    @plugin = new Plugin();
+    @createConnection()
+    @plugin.on 'data', (data) =>
+      @emit 'data.send', data
+      @conx.data data
+
+    @plugin.on 'error', @emitError
+
+    @plugin.on 'update', (properties) =>
+      @emit 'update', properties
+      @conx.update properties
+
+    @plugin.on 'message', (message) =>
+      @emit 'message.send', message
+      @conx.message message
+
+  emitError: (error) =>
+    @emit 'error', error
 
 module.exports = Connector;
